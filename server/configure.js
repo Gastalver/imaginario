@@ -13,6 +13,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var morgan = require('morgan');
 var methodOverride = require('method-override');
+var moment = require('moment');
 var errorHandler = require('errorhandler');
 
 module.exports = function(app) {
@@ -24,10 +25,24 @@ module.exports = function(app) {
 
     routes(app); // Antes de los estaticos.
 
-    app.use('/public/', express.static(path.join(__dirname,
-        '../public')));
+    app.use('/public/', express.static(path.join(__dirname,'../public')));
+
     if ('development' === app.get('env')) {
         app.use(errorHandler());
     }
+
+    // view engine setup
+    app.engine('handlebars', exphbs.create({
+        defaultLayout: 'main',
+        layoutsDir: app.get('views') + '/layouts',
+        partialsDir: [app.get('views') + '/partials'],
+        helpers: {
+            timeago: function(timestamp) {
+                return moment(timestamp).startOf('minute').fromNow();
+            }
+        }
+    }).engine);
+    app.set('view engine', 'handlebars');
+
     return app;
 };
