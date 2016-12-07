@@ -14,12 +14,12 @@ var cookieParser = require('cookie-parser');
 var morgan = require('morgan');
 var methodOverride = require('method-override');
 var moment = require('moment');
+//var multer = require('multer');
+//var upload = multer({dest: path.join(__dirname,'public/upload/temp')});
 var errorHandler = require('errorhandler');
 
 module.exports = function(app) {
     app.use(morgan('dev'));
-    app.use(bodyParser.urlencoded({'extended': true}));
-    app.use(bodyParser.json());
     app.use(methodOverride());
     app.use(cookieParser('imaginario'));
 

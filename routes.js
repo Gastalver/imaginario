@@ -2,11 +2,14 @@
  * Created by Miguel on 04/12/2016.
  */
 
-var express, router, home, image;
+var express, router, home, image,path,multer,upload;
 express = require('express');
 router = express.Router();
 home = require('./controllers/home');
 image = require('./controllers/image');
+//path = require('path');
+//multer = require('multer');
+//upload = multer({dest: path.join(__dirname,'public/upload/temp')});
 
 module.exports = function(app) {
     router.get('/', home.index);
