@@ -1,11 +1,32 @@
 /**
  * Created by Miguel on 04/12/2016.
  */
-
+var express = require('express');
+var router = express.Router();
 var fs = require('fs');
 var path = require('path');
 var multer = require('multer');
-var upload = multer({dest: path.join(__dirname,'public/upload/temp')}).single('imagen');
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        var destino = path.parse(__dirname).dir + '/public/upload/temp';
+        cb(null,destino);
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+var upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+            req.invalidUpload = 'Archivo no admitido';
+            return cb(null, false);
+        }
+        cb(null, true);
+    }}).single('file');
+
+
 
 module.exports = {
     index: function(req, res) {
@@ -39,16 +60,23 @@ module.exports = {
         };
         res.render('image', viewModel);
     },
-    create: function(req, res) { // todo: multer no carga el archivo en req.file
+    create: function (req, res) {
+
         upload(req, res, function (err) {
             if (err) {
-                console.log("ALgo va mal :"+error);
-                return;
+                // An error occurred when uploading
+                console.log('Multer error:' + err);
+                res.status(500).send('Internal Error');
+                return
             }
+            // Everything went fine
+            if (req.invalidUpload){
+                console.log(req.invalidUpload);
+                res.send(req.invalidUpload);
 
-            console.log(req.file.name);
-
-            res.status(200).send("Multer funciona");
+            } else {
+                res.redirect('/images/' + req.file.filename);
+            }
         })
     },
     like: function(req, res) {

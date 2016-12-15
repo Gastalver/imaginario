@@ -51,10 +51,7 @@ jspm_packages
 
 .gitignore
 .idea/
-server.js
-bin/
+
 node_modules/
-package.json
-public/
-routes/
-views/
+
+/public/upload/temp/
