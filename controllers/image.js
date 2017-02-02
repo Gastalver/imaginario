@@ -1,6 +1,7 @@
 /**
  * Created by Miguel on 04/12/2016.
  */
+var sidebar = require('../helpers/sidebar');
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
@@ -58,7 +59,10 @@ module.exports = {
                 }
             ]
         };
-        res.render('image', viewModel);
+        sidebar(viewModel,function(viewModel){
+            res.render('image', viewModel);
+        });
+
     },
     create: function (req, res) {
 
