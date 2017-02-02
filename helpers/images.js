@@ -9,7 +9,7 @@ module.exports = {
                 uniqueId: 1,
                 title: 'Sample Image 1',
                 description: '',
-                filename: 'sample1.jpg',
+                filename: 'sample1.png',
                 views: 0,
                 likes: 0,
                 timestamp: Date.now()
@@ -17,7 +17,7 @@ module.exports = {
                 uniqueId: 2,
                 title: 'Sample Image 2',
                 description: '',
-                filename: 'sample2.jpg',
+                filename: 'sample2.png',
                 views: 0,
                 likes: 0,
                 timestamp: Date.now()
@@ -33,7 +33,7 @@ module.exports = {
                 uniqueId: 4,
                 title: 'Sample Image 4',
                 description: '',
-                filename: 'sample4.jpg',
+                filename: 'sample4.png',
                 views: 0,
                 likes: 0,
                 timestamp: Date.now()

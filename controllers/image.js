@@ -1,6 +1,7 @@
 /**
  * Created by Miguel on 04/12/2016.
  */
+var Models = require('../models');
 var sidebar = require('../helpers/sidebar');
 var express = require('express');
 var router = express.Router();
@@ -31,38 +32,36 @@ var upload = multer({
 
 module.exports = {
     index: function(req, res) {
+        // Inicializamos el modelo
         var viewModel = {
-            image: {
-                uniqueId: 1,
-                title: 'titulo',
-                description: 'descripcion',
-                filename: req.params.image_id,
-                views: 0,
-                likes: 0,
-                timestamp: Date.now()
-            },
-            comments: [
-                {
-                    image_id: 1,
-                    email: 'test@testing.com',
-                    name: 'Test Tester',
-                    gravatar: 'http://lorempixel.com/75/75/animals/1',
-                    comment: 'This is a test comment...',
-                    timestamp: Date.now()
-                },{
-                    image_id: 1,
-                    email: 'test@testing.com',
-                    name: 'Test Tester',
-                    gravatar: 'http://lorempixel.com/75/75/animals/2',
-                    comment: 'Another followup comment!',
-                    timestamp: Date.now()
-                }
-            ]
+            image: {},
+            comments: []
         };
-        sidebar(viewModel,function(viewModel){
-            res.render('image', viewModel);
-        });
-
+        // Consultamos la base de datos para cargar los datos en el apartado imagen del viewModel
+        Models.Image.findOne({ filename: { $regex: req.params.image_id }},
+            function(err, image) {
+                if (err) { throw err; }
+                if (image) {
+                    image.views = image.views + 1;
+                    viewModel.image = image;
+                    image.save();
+                    // A continuación consultamos la base de datos para cargar los datos en el apartado comments del viewModel
+                    Models.Comment.find({ image_id: image._id}, {}, { sort: {'timestamp': 1 }},
+                        function(err, comments){
+                            if (err) { throw err; }
+                            viewModel.comments = comments;
+                            // Finalmente ejecutamos el modulo sidebar que añade al viewmodel los datos del sidebar
+                            // y luego lo renderiza.
+                            sidebar(viewModel, function(viewModel) {
+                                res.render('image', viewModel);
+                            });
+                        }
+                    );
+                } else {
+                    // Si no hay errores pero no hemos encontrado la imagen, redirigimos a la home page.
+                    res.redirect('/');
+                }
+            });
     },
     create: function (req, res) {
 
@@ -84,7 +83,7 @@ module.exports = {
         })
     },
     like: function(req, res) {
-        res.send('Image:like POST controller');
+        res.json({likes: 1});
     },
     comment: function(req, res) {
         res.send('Image:comment POST controller');

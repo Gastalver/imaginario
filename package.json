@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "monitoriza": "nodemon ./server.js localhost 3000",
+    "monitoriza": "nodemon --watch controllers --watch helpers --watch models --watch --watch server --watch views ./server.js localhost 3000",
     "start": "node .server.js"
   },
   "dependencies": {
