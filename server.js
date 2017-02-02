@@ -1,5 +1,6 @@
 var express = require('express');
 
+// Archivo de configuración separado, para organizar mejor.
 var config = require('./server/configure');
 
 var app = express();

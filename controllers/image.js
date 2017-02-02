@@ -8,7 +8,7 @@ var path = require('path');
 var multer = require('multer');
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        var destino = path.parse(__dirname).dir + '/public/upload/temp';
+        var destino = path.parse(__dirname).dir + '/public/upload';
         cb(null,destino);
     },
     filename: function (req, file, cb) {
@@ -33,9 +33,9 @@ module.exports = {
         var viewModel = {
             image: {
                 uniqueId: 1,
-                title: 'Sample Image 1',
-                description: 'This is a sample.',
-                filename: 'sample1.jpg',
+                title: 'titulo',
+                description: 'descripcion',
+                filename: req.params.image_id,
                 views: 0,
                 likes: 0,
                 timestamp: Date.now()
@@ -67,7 +67,7 @@ module.exports = {
                 // An error occurred when uploading
                 console.log('Multer error:' + err);
                 res.status(500).send('Internal Error');
-                return
+                return;
             }
             // Everything went fine
             if (req.invalidUpload){

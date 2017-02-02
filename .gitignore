@@ -55,3 +55,4 @@ jspm_packages
 node_modules/
 
 /public/upload/temp/
+/public/upload/
