@@ -61,7 +61,6 @@ module.exports = {
         res.render('image', viewModel);
     },
     create: function (req, res) {
-
         upload(req, res, function (err) {
             if (err) {
                 // An error occurred when uploading
@@ -73,11 +72,11 @@ module.exports = {
             if (req.invalidUpload){
                 console.log(req.invalidUpload);
                 res.send(req.invalidUpload);
-
             } else {
-                res.redirect('/images/' + req.file.filename);
+                // todo pasa a carpeta upload, conservando copia en temp
+                res.redirect('/images/' + req.file.name);
             }
-        })
+        });
     },
     like: function(req, res) {
         res.send('Image:like POST controller');

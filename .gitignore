@@ -52,6 +52,7 @@ jspm_packages
 .gitignore
 .idea/
 
-node_modules/
+
 
 /public/upload/temp/
+
