@@ -132,7 +132,7 @@ module.exports = {
         Models.Image.findOne({ filename: { $regex: req.params.image_id }}, function(err, image) {
                 if (!err && image) {
                     console.log("Encontrado el registro de la imagen comentada. uniqueID: " + image.uniqueID);
-                    var newComment = new Models.Comment({ // TODO Corregir. No captura req.body.name
+                    var newComment = new Models.Comment({ // TODO Corregir. TypeError: Cannot read property 'name' of undefined
                             name : req.body.name,
                             email : req.body.email,
                             gravatar : md5(req.body.email),
