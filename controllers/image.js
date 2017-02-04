@@ -1,6 +1,7 @@
 /**
  * Created by Miguel on 04/12/2016.
  */
+var md5 = require('md5');
 var Models = require('../models');
 var sidebar = require('../helpers/sidebar');
 var express = require('express');
@@ -108,15 +109,42 @@ module.exports = {
                 newImg.save(function(error,image){
                       //console.log("Archivo guardado correctamente. Redirigiendo a image/index");
                       // Redirigimos indicando como parametro el campo virtual uniqueId del modelo imagen.
-                      res.redirect('/images/' + image.filename);
+                      res.redirect('/images/' + image.uniqueID);
                     });
                 }
         });
     },
     like: function(req, res) {
-        res.json({likes: 1});
+        Models.Image.findOne({ filename: { $regex: req.params.image_id }}, function(err, image) {
+                if (!err && image) {
+                    image.likes = image.likes + 1;
+                    image.save(function(err) {
+                        if (err) {
+                            res.json(err);
+                        } else {
+                            res.json({ likes: image.likes });
+                        }
+                    });
+                }
+            });
     },
     comment: function(req, res) {
-        res.send('Image:comment POST controller');
+        Models.Image.findOne({ filename: { $regex: req.params.image_id }}, function(err, image) {
+                if (!err && image) {
+                    console.log("Encontrado el registro de la imagen comentada. uniqueID: " + image.uniqueID);
+                    var newComment = new Models.Comment({ // TODO Corregir. No captura req.body.name
+                            name : req.body.name,
+                            email : req.body.email,
+                            gravatar : md5(req.body.email),
+                            image_id : image._id
+                    });
+                    newComment.save(function(err, comment) {
+                        if (err) { throw err; }
+                        res.redirect('/images/' + image.uniqueID + '#' + comment._id);
+                    });
+                } else {
+                    res.redirect('/');
+                }
+            });
     }
 };

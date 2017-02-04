@@ -15,12 +15,16 @@ module.exports = {
         };
         ImageModel.find({},{},{sort:{timestamp: -1}},function(error,images){
             if(error) {throw error};
-            viewModel = images;
+            console.log("Encontradas "+images.length + " imágenes.");
+            viewModel.images = images;
+            console.log(viewModel);
 
-        } )
-        // Ejecutamos el res.render del viewmodel como callback del helper sidebar definido en ../helpers/sidebar.js
-        sidebar(viewModel, function(viewModel) {
-            res.render('index', viewModel);
+            // Ejecutamos el res.render del viewmodel como callback del helper sidebar definido en ../helpers/sidebar.js
+            sidebar(viewModel, function(viewModel) {
+                console.log(viewModel);
+                res.render('index', viewModel);
+        } );
+
         });
     }
 };
