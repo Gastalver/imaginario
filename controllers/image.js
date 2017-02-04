@@ -59,6 +59,7 @@ module.exports = {
                     );
                 } else {
                     // Si no hay errores pero no hemos encontrado la imagen, redirigimos a la home page.
+                    console.log("No hay errores pero el parametro image_id de la url (" + req.params.image_id + ") no coincide con el campo filename de ningun registro en la bd. Redirigiendo a home.");
                     res.redirect('/');
                 }
             });
@@ -78,9 +79,39 @@ module.exports = {
                 res.send(req.invalidUpload);
 
             } else {
-                res.redirect('/images/' + req.file.filename);
-            }
-        })
+                // Tenemos disponible toda esta información entre el objeto req.file que nos ofrece multer y el
+                // objeto req.body que nos crea body-parser.
+                console.log("El archivo ha sido subido");
+                console.log("El nombre del campo de tipo archivo en el formulario es: " + req.file.fieldname);
+                console.log("El titulo dado al archivo es " + req.body.title);
+                console.log("Ha sido descrito como " + req.body.description);
+                console.log("El nombre del archivo en el PC del cliente era " + req.file.originalname);
+                console.log("El tipo de encoding del archivo subido es " + req.file.encoding);
+                console.log("El mime/type del archivo subido es " + req.file.mimetype);
+                console.log("El tamaño del archivo subido en bytes es " + req.file.size);
+                console.log("El archivo ha sido guardado en la carpeta "+ req.file.destination);
+                console.log("El archivo ha sido guardado con el nombre " + req.file.filename);
+                console.log("Dirección para acceder al archivo: " + req.file.path);
+
+                // Creamos un nuevo objeto a partir del modelo Imagen y lo guardamos en la bd.
+                var newImg = new Models.Image({
+                    title: req.body.title,
+                    description: req.body.description,
+                    filename: req.file.filename
+                });
+                 // Aquí podríamos llevar a cabo una validación del documento antes de grabarlo.
+                newImg.validate(function(error){
+                    if(error)
+                        res.send("error de validación");
+                    console.log("Validacion de mongo superada correctamente");
+                });
+                newImg.save(function(error,image){
+                      //console.log("Archivo guardado correctamente. Redirigiendo a image/index");
+                      // Redirigimos indicando como parametro el campo virtual uniqueId del modelo imagen.
+                      res.redirect('/images/' + image.filename);
+                    });
+                }
+        });
     },
     like: function(req, res) {
         res.json({likes: 1});
