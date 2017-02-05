@@ -22,6 +22,8 @@ module.exports = function(app) {
     app.use(morgan('dev'));
     app.use(methodOverride());
     app.use(cookieParser('imaginario'));
+    // Este middleware para los fomrularios que no incluyen archivos con enctype urlencoded como el de comentarios.
+    app.use(bodyParser.urlencoded({ extended: false }));
 
     routes(app); // Antes de los estaticos.
 

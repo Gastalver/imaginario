@@ -1,6 +1,7 @@
 /**
  * Created by Miguel on 04/12/2016.
  */
+
 var md5 = require('md5');
 var Models = require('../models');
 var sidebar = require('../helpers/sidebar');
@@ -129,22 +130,20 @@ module.exports = {
             });
     },
     comment: function(req, res) {
-        Models.Image.findOne({ filename: { $regex: req.params.image_id }}, function(err, image) {
-                if (!err && image) {
-                    console.log("Encontrado el registro de la imagen comentada. uniqueID: " + image.uniqueID);
-                    var newComment = new Models.Comment({ // TODO Corregir. TypeError: Cannot read property 'name' of undefined
-                            name : req.body.name,
-                            email : req.body.email,
-                            gravatar : md5(req.body.email),
-                            image_id : image._id
-                    });
-                    newComment.save(function(err, comment) {
-                        if (err) { throw err; }
-                        res.redirect('/images/' + image.uniqueID + '#' + comment._id);
-                    });
-                } else {
-                    res.redirect('/');
-                }
-            });
+        Models.Image.findOne({filename: {$regex: req.params.image_id}}, function (err, image) {
+            if (!err && image) {
+                var newComment = new Models.Comment(req.body);
+                newComment.gravatar = md5(newComment.email);
+                newComment.image_id = image._id;
+                newComment.save(function (err, comment) {
+                    if (err) {
+                        throw err;
+                    }
+                    res.redirect('/images/' + image.uniqueID + '#' + comment._id);
+                });
+            } else {
+                res.redirect('/');
+            }
+        });
     }
 };
